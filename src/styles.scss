@@ -1,0 +1,25 @@
+/* Bootstrap */
+@import 'bootstrap/scss/bootstrap';
+@import 'bootstrap-icons/font/bootstrap-icons.css';
+
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background-color: #f4f6f9;
+}
+
+.card {
+  border-radius: 0.75rem;
+}
+
+.table th {
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: #6c757d;
+}
+
+.navbar-brand,
+.nav-link.active {
+  font-weight: 500;
+}

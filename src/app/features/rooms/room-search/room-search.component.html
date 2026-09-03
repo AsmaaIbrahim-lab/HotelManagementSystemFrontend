@@ -1,0 +1,70 @@
+<div class="mb-4">
+  <a routerLink="/rooms" class="text-decoration-none"><i class="bi bi-arrow-left me-1"></i>Back to rooms</a>
+  <h1 class="h3 mt-2 mb-0">Search Available Rooms</h1>
+</div>
+
+<div class="card border-0 shadow-sm mb-4">
+  <div class="card-body">
+    <form [formGroup]="form" (ngSubmit)="search()" class="row g-3 align-items-end">
+      <div class="col-md-3">
+        <label class="form-label">Room Type</label>
+        <select class="form-select" formControlName="roomType">
+          <option value="">Any</option>
+          @for (type of roomTypes.slice(1); track type) {
+            <option [value]="type">{{ type }}</option>
+          }
+        </select>
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Min Price</label>
+        <input type="number" class="form-control" formControlName="minPrice" />
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Max Price</label>
+        <input type="number" class="form-control" formControlName="maxPrice" />
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Check-in</label>
+        <input type="date" class="form-control" formControlName="checkInDate" />
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Check-out</label>
+        <input type="date" class="form-control" formControlName="checkOutDate" />
+      </div>
+      <div class="col-md-1">
+        <button class="btn btn-primary w-100" type="submit">Search</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+@if (loading) {
+  <app-loading-spinner [fullscreen]="true" />
+} @else if (searched) {
+  <div class="card border-0 shadow-sm">
+    <div class="table-responsive">
+      <table class="table table-hover mb-0">
+        <thead>
+          <tr>
+            <th>Room #</th>
+            <th>Type</th>
+            <th>Price/Night</th>
+            <th>Available</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (room of rooms; track room.id) {
+            <tr>
+              <td>{{ room.roomNumber }}</td>
+              <td>{{ room.roomType }}</td>
+              <td>{{ room.pricePerNight | currency }}</td>
+              <td><span class="badge bg-success">Yes</span></td>
+            </tr>
+          } @empty {
+            <tr><td colspan="4" class="text-center text-muted py-4">No available rooms match your criteria.</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+}

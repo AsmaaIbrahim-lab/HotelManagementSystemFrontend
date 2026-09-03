@@ -1,0 +1,158 @@
+<div class="mb-4">
+  <h1 class="h3 mb-1">Reports</h1>
+  <p class="text-muted mb-0">Hotel performance analytics</p>
+</div>
+
+<ul class="nav nav-tabs mb-4">
+  <li class="nav-item">
+    <button class="nav-link" [class.active]="activeTab === 'top-rooms'" (click)="setTab('top-rooms')">Top Rooms</button>
+  </li>
+  <li class="nav-item">
+    <button class="nav-link" [class.active]="activeTab === 'revenue'" (click)="setTab('revenue')">Revenue</button>
+  </li>
+  <li class="nav-item">
+    <button class="nav-link" [class.active]="activeTab === 'occupancy'" (click)="setTab('occupancy')">Occupancy</button>
+  </li>
+</ul>
+
+<div class="card border-0 shadow-sm mb-4">
+  <div class="card-body">
+    <form [formGroup]="dateForm" (ngSubmit)="loadActiveReport()" class="row g-3 align-items-end">
+      @if (activeTab !== 'top-rooms') {
+        <div class="col-md-3">
+          <label class="form-label">From</label>
+          <input type="date" class="form-control" formControlName="from" />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">To</label>
+          <input type="date" class="form-control" formControlName="to" />
+        </div>
+      }
+      @if (activeTab === 'top-rooms') {
+        <div class="col-md-3">
+          <label class="form-label">Take (top N)</label>
+          <input type="number" class="form-control" formControlName="take" min="1" max="50" />
+        </div>
+      }
+      <div class="col-md-2">
+        <button class="btn btn-primary" type="submit">Run Report</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+@if (loading) {
+  <app-loading-spinner [fullscreen]="true" />
+} @else {
+  @switch (activeTab) {
+    @case ('top-rooms') {
+      <div class="card border-0 shadow-sm">
+        <div class="table-responsive">
+          <table class="table table-hover mb-0">
+            <thead>
+              <tr>
+                <th>Room #</th>
+                <th>Type</th>
+                <th>Reservations</th>
+                <th class="text-end">Total Revenue</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (row of topRooms; track row.roomNumber) {
+                <tr>
+                  <td>{{ row.roomNumber }}</td>
+                  <td>{{ row.roomType }}</td>
+                  <td>{{ row.reservationCount }}</td>
+                  <td class="text-end">{{ row.totalRevenue | currency }}</td>
+                </tr>
+              } @empty {
+                <tr><td colspan="4" class="text-center text-muted py-4">No data.</td></tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+    @case ('revenue') {
+      @if (revenueReport) {
+        <div class="row g-3 mb-4">
+          <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100"><div class="card-body">
+              <div class="text-muted small">Total Reservations</div>
+              <div class="h3 mb-0">{{ revenueReport.totalReservations }}</div>
+            </div></div>
+          </div>
+          <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100"><div class="card-body">
+              <div class="text-muted small">Total Nights</div>
+              <div class="h3 mb-0">{{ revenueReport.totalNights }}</div>
+            </div></div>
+          </div>
+          <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100"><div class="card-body">
+              <div class="text-muted small">Total Revenue</div>
+              <div class="h3 mb-0">{{ revenueReport.totalRevenue | currency }}</div>
+            </div></div>
+          </div>
+        </div>
+        <div class="card border-0 shadow-sm">
+          <div class="card-header bg-white"><h2 class="h6 mb-0">Breakdown by Room Type</h2></div>
+          <div class="table-responsive">
+            <table class="table table-hover mb-0">
+              <thead>
+                <tr>
+                  <th>Room Type</th>
+                  <th>Reservations</th>
+                  <th>Nights</th>
+                  <th class="text-end">Revenue</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (row of revenueReport.byRoomType; track row.roomType) {
+                  <tr>
+                    <td>{{ row.roomType }}</td>
+                    <td>{{ row.totalReservations }}</td>
+                    <td>{{ row.totalNights }}</td>
+                    <td class="text-end">{{ row.totalRevenue | currency }}</td>
+                  </tr>
+                } @empty {
+                  <tr><td colspan="4" class="text-center text-muted py-4">No breakdown data.</td></tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      }
+    }
+    @case ('occupancy') {
+      <div class="card border-0 shadow-sm">
+        <div class="table-responsive">
+          <table class="table table-hover mb-0">
+            <thead>
+              <tr>
+                <th>Room #</th>
+                <th>Type</th>
+                <th>Booked Nights</th>
+                <th>Available Nights</th>
+                <th class="text-end">Occupancy %</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (row of occupancyReport; track row.roomNumber) {
+                <tr>
+                  <td>{{ row.roomNumber }}</td>
+                  <td>{{ row.roomType }}</td>
+                  <td>{{ row.bookedNights }}</td>
+                  <td>{{ row.availableNights }}</td>
+                  <td class="text-end">{{ row.occupancyPercentage | number:'1.0-1' }}%</td>
+                </tr>
+              } @empty {
+                <tr><td colspan="5" class="text-center text-muted py-4">No occupancy data.</td></tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+  }
+}

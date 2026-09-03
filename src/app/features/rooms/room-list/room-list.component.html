@@ -1,0 +1,52 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h1 class="h3 mb-1">Rooms</h1>
+    <p class="text-muted mb-0">Manage hotel rooms</p>
+  </div>
+  <div class="d-flex gap-2">
+    <a routerLink="search" class="btn btn-outline-primary">Search Available</a>
+    <a routerLink="new" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i>Add Room</a>
+  </div>
+</div>
+
+@if (loading) {
+  <app-loading-spinner [fullscreen]="true" message="Loading rooms..." />
+} @else {
+  <div class="card border-0 shadow-sm">
+    <div class="table-responsive">
+      <table class="table table-hover mb-0 align-middle">
+        <thead>
+          <tr>
+            <th>Room #</th>
+            <th>Type</th>
+            <th>Price/Night</th>
+            <th>Available</th>
+            <th class="text-end">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (room of rooms; track room.id) {
+            <tr>
+              <td class="fw-semibold">{{ room.roomNumber }}</td>
+              <td>{{ room.roomType }}</td>
+              <td>{{ room.pricePerNight | currency }}</td>
+              <td>
+                <span class="badge" [class.bg-success]="room.isAvailable" [class.bg-secondary]="!room.isAvailable">
+                  {{ room.isAvailable ? 'Yes' : 'No' }}
+                </span>
+              </td>
+              <td class="text-end">
+                <a [routerLink]="[room.id, 'edit']" class="btn btn-sm btn-outline-primary me-1">Edit</a>
+                <button class="btn btn-sm btn-outline-danger" (click)="deleteRoom(room)">Delete</button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="5" class="text-center text-muted py-4">No rooms found.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+}

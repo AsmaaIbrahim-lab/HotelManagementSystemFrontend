@@ -1,0 +1,49 @@
+<div class="auth-wrapper d-flex align-items-center justify-content-center">
+  <div class="card auth-card shadow border-0">
+    <div class="card-body p-4 p-md-5">
+      <div class="text-center mb-4">
+        <i class="bi bi-building text-primary fs-1"></i>
+        <h2 class="mt-2 mb-1">Welcome back</h2>
+        <p class="text-muted">Sign in to Hotel Management</p>
+      </div>
+
+      @if (apiError) {
+        <div class="alert alert-danger">{{ apiError }}</div>
+      }
+
+      <form [formGroup]="form" (ngSubmit)="submit()">
+        <div class="mb-3">
+          <label class="form-label" for="email">Email</label>
+          <input id="email" type="email" class="form-control" formControlName="email" [class.is-invalid]="getControlError('email')" />
+          @if (getControlError('email'); as err) {
+            <div class="invalid-feedback d-block">{{ err }}</div>
+          }
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label" for="password">Password</label>
+          <input id="password" type="password" class="form-control" formControlName="password" [class.is-invalid]="getControlError('password')" />
+          @if (getControlError('password'); as err) {
+            <div class="invalid-feedback d-block">{{ err }}</div>
+          }
+        </div>
+
+        <button class="btn btn-primary w-100" type="submit" [disabled]="loading">
+          @if (loading) {
+            <span class="spinner-border spinner-border-sm me-2"></span>
+          }
+          Sign in
+        </button>
+      </form>
+
+      <p class="text-center mt-4 mb-0">
+        Don't have an account?
+        <a routerLink="/register">Register</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+@if (loading) {
+  <app-loading-spinner message="Signing in..." />
+}

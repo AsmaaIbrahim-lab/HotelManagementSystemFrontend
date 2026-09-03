@@ -1,0 +1,89 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h1 class="h3 mb-1">Reservations</h1>
+    <p class="text-muted mb-0">Manage guest reservations</p>
+  </div>
+  <a routerLink="new" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i>New Reservation</a>
+</div>
+
+<div class="card border-0 shadow-sm mb-4">
+  <div class="card-body">
+    <form [formGroup]="filterForm" (ngSubmit)="loadReservations()" class="row g-3 align-items-end">
+      <div class="col-md-2">
+        <label class="form-label">Guest Name</label>
+        <input class="form-control" formControlName="guestName" />
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Room #</label>
+        <input class="form-control" formControlName="roomNumber" />
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Check-in</label>
+        <input type="date" class="form-control" formControlName="checkInDate" />
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Check-out</label>
+        <input type="date" class="form-control" formControlName="checkOutDate" />
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Status</label>
+        <select class="form-select" formControlName="status">
+          <option value="">Any</option>
+          @for (status of statuses; track status) {
+            <option [value]="status">{{ status }}</option>
+          }
+        </select>
+      </div>
+      <div class="col-md-2 d-flex gap-2">
+        <button class="btn btn-primary" type="submit">Filter</button>
+        <button class="btn btn-outline-secondary" type="button" (click)="clearFilters()">Clear</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+@if (loading) {
+  <app-loading-spinner [fullscreen]="true" />
+} @else {
+  <div class="card border-0 shadow-sm">
+    <div class="table-responsive">
+      <table class="table table-hover mb-0 align-middle">
+        <thead>
+          <tr>
+            <th>Guest</th>
+            <th>Room</th>
+            <th>Check-in</th>
+            <th>Check-out</th>
+            <th>Status</th>
+            <th class="text-end">Total</th>
+            <th class="text-end">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (r of reservations; track r.id) {
+            <tr>
+              <td>{{ r.guestName }}</td>
+              <td>{{ r.roomNumber ?? r.roomId }}</td>
+              <td>{{ r.checkInDate | date:'mediumDate' }}</td>
+              <td>{{ r.checkOutDate | date:'mediumDate' }}</td>
+              <td>
+                <span class="badge" [class.bg-success]="r.status === 'Confirmed'" [class.bg-secondary]="r.status === 'Cancelled'">
+                  {{ r.status }}
+                </span>
+              </td>
+              <td class="text-end">{{ r.totalPrice | currency }}</td>
+              <td class="text-end">
+                <a [routerLink]="[r.id]" class="btn btn-sm btn-outline-primary me-1">View</a>
+                <button class="btn btn-sm btn-outline-danger" [disabled]="r.status === 'Cancelled'" (click)="cancelReservation(r)">
+                  Cancel
+                </button>
+              </td>
+            </tr>
+          } @empty {
+            <tr><td colspan="7" class="text-center text-muted py-4">No reservations found.</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+}

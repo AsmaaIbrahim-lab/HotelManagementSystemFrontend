@@ -1,0 +1,63 @@
+<div class="mb-4">
+  <a routerLink="/reservations" class="text-decoration-none"><i class="bi bi-arrow-left me-1"></i>Back to reservations</a>
+  <h1 class="h3 mt-2 mb-0">New Reservation</h1>
+</div>
+
+@if (createdReservation) {
+  <div class="alert alert-success">
+    <h2 class="h5">Reservation Created</h2>
+    <p class="mb-1"><strong>Guest:</strong> {{ createdReservation.guestName }}</p>
+    <p class="mb-1"><strong>Room:</strong> {{ createdReservation.roomNumber ?? createdReservation.roomId }}</p>
+    <p class="mb-1"><strong>Total Amount:</strong> {{ createdReservation.totalPrice | currency }}</p>
+    <button class="btn btn-primary mt-2" (click)="goToList()">View Reservations</button>
+  </div>
+} @else {
+  <div class="card border-0 shadow-sm">
+    <div class="card-body p-4">
+      <form [formGroup]="form" (ngSubmit)="submit()" class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label" for="checkInDate">Check-in Date</label>
+          <input id="checkInDate" type="date" class="form-control" formControlName="checkInDate" [class.is-invalid]="getControlError('checkInDate')" />
+          @if (getControlError('checkInDate'); as err) {
+            <div class="invalid-feedback d-block">{{ err }}</div>
+          }
+        </div>
+        <div class="col-md-6">
+          <label class="form-label" for="checkOutDate">Check-out Date</label>
+          <input id="checkOutDate" type="date" class="form-control" formControlName="checkOutDate" [class.is-invalid]="getControlError('checkOutDate')" />
+          @if (getControlError('checkOutDate'); as err) {
+            <div class="invalid-feedback d-block">{{ err }}</div>
+          }
+        </div>
+        <div class="col-md-6">
+          <label class="form-label" for="roomId">Room</label>
+          <select id="roomId" class="form-select" formControlName="roomId" [class.is-invalid]="getControlError('roomId')">
+            <option [ngValue]="0" disabled>Select a room</option>
+            @for (room of availableRooms; track room.id) {
+              <option [ngValue]="room.id">{{ room.roomNumber }} — {{ room.roomType }} ({{ room.pricePerNight | currency }}/night)</option>
+            }
+          </select>
+          @if (loadingRooms) {
+            <small class="text-muted">Loading available rooms...</small>
+          }
+          @if (getControlError('roomId'); as err) {
+            <div class="invalid-feedback d-block">{{ err }}</div>
+          }
+        </div>
+        <div class="col-md-6">
+          <label class="form-label" for="guestName">Guest Name</label>
+          <input id="guestName" class="form-control" formControlName="guestName" [class.is-invalid]="getControlError('guestName')" />
+          @if (getControlError('guestName'); as err) {
+            <div class="invalid-feedback d-block">{{ err }}</div>
+          }
+        </div>
+        <div class="col-12">
+          <button class="btn btn-primary" type="submit" [disabled]="saving">
+            @if (saving) { <span class="spinner-border spinner-border-sm me-2"></span> }
+            Create Reservation
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
