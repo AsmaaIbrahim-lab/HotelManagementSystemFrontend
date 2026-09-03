@@ -6,7 +6,7 @@ Angular 17 standalone SPA for the Hotel Management Web API (JWT auth, CQRS, Sign
 
 - Node.js 18+
 - npm
-- ASP.NET Core API running (default: `https://localhost:7001`)
+- ASP.NET Core API running (default: `https://localhost:5188`)
 
 ## Quick Start
 
@@ -25,8 +25,8 @@ Edit `src/environments/environment.ts`:
 ```typescript
 export const environment = {
   production: false,
-  apiUrl: 'https://localhost:7001/api',
-  signalRHubUrl: 'https://localhost:7001/hubs/hotel'
+  apiUrl: 'http://localhost:5188/api',
+  signalRHubUrl: 'http://localhost:5188/hubs/hotel'
 };
 ```
 
